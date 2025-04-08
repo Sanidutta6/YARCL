@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 const SelectContext = React.createContext()
 
-function Select({ children, value, onValueChange, ...props }) {
+function Select({ children, value, onValueChange, placeholder, ...props }) {
     const [isOpen, setIsOpen] = React.useState(false)
     const [selectedValue, setSelectedValue] = React.useState(value)
     const triggerRef = React.useRef(null)
@@ -39,9 +39,10 @@ function Select({ children, value, onValueChange, ...props }) {
             selectedValue,
             handleValueChange,
             triggerRef,
-            contentRef
+            contentRef,
+            placeholder
         }}>
-            <div data-slot="select" className="relative" {...props}>
+            <div data-slot="select" className="relative w-full" {...props}>
                 {React.Children.map(children, child => {
                     if (child.type === SelectTrigger) {
                         return React.cloneElement(child, { ref: triggerRef })
@@ -62,10 +63,10 @@ function SelectGroup({ children, ...props }) {
 }
 
 function SelectValue({ children, ...props }) {
-    const { selectedValue } = React.useContext(SelectContext)
+    const { selectedValue, placeholder } = React.useContext(SelectContext)
     return (
         <span data-slot="select-value" className="line-clamp-1 flex items-center gap-2" {...props}>
-            {children || selectedValue}
+            {children || selectedValue || placeholder}
         </span>
     )
 }
@@ -76,20 +77,24 @@ const SelectTrigger = React.forwardRef(({ className, size = "default", children,
     return (
         <button
             ref={ref}
+            type="button"
             data-slot="select-trigger"
             data-size={size}
             className={cn(
                 "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground",
                 "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20",
                 "dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30",
-                "dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border",
+                "dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border",
                 "bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow]",
                 "outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
                 "data-[size=default]:h-9 data-[size=sm]:h-8",
                 "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className
             )}
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={(e) => {
+                e.preventDefault()
+                setIsOpen(!isOpen)
+            }}
             {...props}
         >
             {children}
@@ -157,7 +162,10 @@ function SelectItem({ className, children, value, ...props }) {
                 "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className
             )}
-            onClick={() => handleValueChange(value)}
+            onClick={(e) => {
+                e.preventDefault()
+                handleValueChange(value)
+            }}
             {...props}
         >
             {selectedValue === value && (
