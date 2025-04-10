@@ -1,62 +1,57 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
 import ReactDOM from "react-dom"
 import { Button } from "@/components/ui/Button"
-import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { ChevronRight, Check, Circle } from "lucide-react"
 
 const DropdownContext = React.createContext()
 
-function DropdownMenu({ children, value, onValueChange, ...props }) {
-    const [isOpen, setIsOpen] = React.useState(false)
-    const [selectedValue, setSelectedValue] = React.useState(value)
+export function DropdownMenu({ children, open: controlledOpen, onOpenChange, defaultOpen = false, modal = true }) {
+    const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
     const triggerRef = React.useRef(null)
     const contentRef = React.useRef(null)
 
-    const handleValueChange = (newValue) => {
-        setSelectedValue(newValue)
-        onValueChange?.(newValue)
-        setIsOpen(false)
-    }
+    const open = controlledOpen !== undefined ? controlledOpen : uncontrolledOpen
+    const setOpen = onOpenChange || setUncontrolledOpen
 
     React.useEffect(() => {
         const handleClickOutside = (event) => {
             if (contentRef.current && !contentRef.current.contains(event.target) &&
                 triggerRef.current && !triggerRef.current.contains(event.target)) {
-                setIsOpen(false)
+                setOpen(false)
             }
         }
 
         const handleScroll = () => {
-            if (isOpen) {
-                setIsOpen(false)
+            if (open) {
+                setOpen(false)
             }
         }
 
-        if (isOpen) {
+        if (open) {
             document.addEventListener('mousedown', handleClickOutside)
             window.addEventListener('scroll', handleScroll, true)
-            document.body.style.overflow = 'hidden'
+            if (modal) document.body.style.overflow = 'hidden'
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
             window.removeEventListener('scroll', handleScroll, true)
-            document.body.style.overflow = ''
+            if (modal) document.body.style.overflow = ''
         }
-    }, [isOpen])
+    }, [open, modal, setOpen])
 
     return (
         <DropdownContext.Provider value={{
-            isOpen,
-            setIsOpen,
+            open,
+            setOpen,
             triggerRef,
             contentRef,
-            selectedValue,
-            handleValueChange
+            modal
         }}>
-            <div data-slot="dropdown-menu" className="relative" {...props}>
+            <div className="relative inline-block text-left">
                 {React.Children.map(children, child => {
-                    if (child && child.type === DropdownMenuTrigger) {
+                    if (child && child.type === DropdownTrigger) {
                         return React.cloneElement(child, { ref: triggerRef })
                     }
                     return child
@@ -66,17 +61,32 @@ function DropdownMenu({ children, value, onValueChange, ...props }) {
     )
 }
 
-const DropdownMenuTrigger = React.forwardRef(({ children, asChild, ...props }, ref) => {
-    const { setIsOpen } = React.useContext(DropdownContext)
+const DropdownTrigger = React.forwardRef(({ children, asChild, variant = "outline", size = "default", ...props }, ref) => {
+    const { setOpen, open } = React.useContext(DropdownContext)
+
+    const handleKeyDown = (e) => {
+        if (['Enter', ' '].includes(e.key)) {
+            e.preventDefault()
+            setOpen(!open)
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            setOpen(true)
+        }
+    }
 
     if (asChild && React.isValidElement(children)) {
         return React.cloneElement(children, {
-            ref: ref,
+            ref,
+            'aria-haspopup': 'menu',
+            'aria-expanded': open,
             onClick: (e) => {
                 children.props.onClick?.(e)
-                setIsOpen(prev => !prev)
+                setOpen(!open)
             },
-            "data-slot": "dropdown-menu-trigger",
+            onKeyDown: (e) => {
+                children.props.onKeyDown?.(e)
+                handleKeyDown(e)
+            },
             ...props
         })
     }
@@ -84,8 +94,12 @@ const DropdownMenuTrigger = React.forwardRef(({ children, asChild, ...props }, r
     return (
         <Button
             ref={ref}
-            data-slot="dropdown-menu-trigger"
-            onClick={() => setIsOpen(prev => !prev)}
+            variant={variant}
+            size={size}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            onKeyDown={handleKeyDown}
             {...props}
         >
             {children}
@@ -93,7 +107,7 @@ const DropdownMenuTrigger = React.forwardRef(({ children, asChild, ...props }, r
     )
 })
 
-function DropdownMenuPortal({ children }) {
+function DropdownPortal({ children }) {
     const [mounted, setMounted] = React.useState(false)
 
     React.useEffect(() => {
@@ -105,39 +119,272 @@ function DropdownMenuPortal({ children }) {
     return ReactDOM.createPortal(children, document.body)
 }
 
-function DropdownMenuContent({ className, sideOffset = 4, children, ...props }) {
-    const { isOpen, triggerRef, contentRef } = React.useContext(DropdownContext)
+function DropdownContent({ children, className, sideOffset = 4, alignOffset = 0, align = 'start', ...props }) {
+    const { open, triggerRef, contentRef, setOpen } = React.useContext(DropdownContext)
     const [position, setPosition] = React.useState({ top: 0, left: 0 })
 
     React.useEffect(() => {
-        if (isOpen && triggerRef.current) {
+        if (open && triggerRef.current && contentRef.current) {
             const triggerRect = triggerRef.current.getBoundingClientRect()
-            const contentHeight = contentRef.current?.getBoundingClientRect()?.height || 0
+            const contentRect = contentRef.current.getBoundingClientRect()
 
+            // Calculate initial position
             let top = triggerRect.bottom + window.scrollY + sideOffset
-            let left = triggerRect.left + window.scrollX
+            let left = triggerRect.left + window.scrollX + alignOffset
 
-            // Adjust position if it would go off screen
-            if (top + contentHeight > window.innerHeight + window.scrollY) {
-                top = triggerRect.top + window.scrollY - contentHeight - sideOffset
+            // Adjust for alignment
+            if (align === 'center') {
+                left = left + (triggerRect.width - contentRect.width) / 2
+            } else if (align === 'end') {
+                left = left + triggerRect.width - contentRect.width
             }
-            if (left < 0) left = 0
+
+            // Check boundaries
+            const viewportWidth = window.innerWidth
+            const viewportHeight = window.innerHeight
+
+            // Adjust for right overflow
+            if (left + contentRect.width > viewportWidth) {
+                left = viewportWidth - contentRect.width - 8
+            }
+
+            // Adjust for left overflow
+            if (left < 0) left = 8
+
+            // Adjust for bottom overflow
+            if (top + contentRect.height > viewportHeight + window.scrollY) {
+                top = triggerRect.top + window.scrollY - contentRect.height - sideOffset
+            }
 
             setPosition({ top, left })
         }
-    }, [isOpen, sideOffset])
+    }, [open, sideOffset, alignOffset, align])
 
-    if (!isOpen) return null
+    if (!open) return null
 
     return (
-        <DropdownMenuPortal>
+        <DropdownPortal>
             <div
                 ref={contentRef}
-                data-slot="dropdown-menu-content"
                 className={cn(
-                    "bg-popover text-popover-foreground animate-in fade-in-0 zoom-in-95",
-                    "z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
-                    "fixed max-h-[var(--radix-dropdown-menu-content-available-height)]",
+                    "bg-popover text-popover-foreground rounded-md border shadow-lg",
+                    "z-50 min-w-[8rem] overflow-hidden p-1",
+                    "fixed origin-top-left animate-in fade-in-0 zoom-in-95",
+                    className
+                )}
+                style={{
+                    top: `${position.top}px`,
+                    left: `${position.left}px`,
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                        e.preventDefault()
+                        setOpen(false)
+                        triggerRef.current?.focus()
+                    }
+                }}
+                {...props}
+            >
+                {children}
+            </div>
+        </DropdownPortal>
+    )
+}
+
+function DropdownGroup({ children, className, ...props }) {
+    return (
+        <div className={cn("space-y-1 p-1", className)} {...props}>
+            {children}
+        </div>
+    )
+}
+
+function DropdownItem({ children, className, onSelect, ...props }) {
+    const { setOpen } = React.useContext(DropdownContext)
+
+    const handleClick = (e) => {
+        onSelect?.(e)
+        setOpen(false)
+    }
+
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+                "w-full justify-start font-normal",
+                className
+            )}
+            onClick={handleClick}
+            {...props}
+        >
+            {children}
+        </Button>
+    )
+}
+
+function DropdownCheckboxItem({ children, checked, onCheckedChange, className, ...props }) {
+    return (
+        <DropdownItem
+            className={cn("flex justify-between", className)}
+            onClick={() => onCheckedChange(!checked)}
+            {...props}
+        >
+            <span className="flex items-center gap-2">
+                {checked && <Check className="size-4" />}
+                {children}
+            </span>
+        </DropdownItem>
+    )
+}
+
+function DropdownRadioGroup({ children, className, ...props }) {
+    return (
+        <div className={cn("space-y-1 p-1", className)} {...props}>
+            {children}
+        </div>
+    )
+}
+
+function DropdownRadioItem({ children, value, checked, onValueChange, className, ...props }) {
+    return (
+        <DropdownItem
+            className={cn("flex justify-between", className)}
+            onClick={() => onValueChange(value)}
+            {...props}
+        >
+            <span className="flex items-center gap-2">
+                {checked && <Circle className="size-4 fill-current" />}
+                {children}
+            </span>
+        </DropdownItem>
+    )
+}
+
+function DropdownLabel({ children, className, ...props }) {
+    return (
+        <div
+            className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+            {...props}
+        >
+            {children}
+        </div>
+    )
+}
+
+function DropdownSeparator({ className, ...props }) {
+    return (
+        <div
+            className={cn("-mx-1 my-1 h-px bg-border", className)}
+            {...props}
+        />
+    )
+}
+
+function DropdownSubMenu({ children }) {
+    const [subOpen, setSubOpen] = React.useState(false)
+    const triggerRef = React.useRef(null)
+    const contentRef = React.useRef(null)
+    const hoverTimeoutRef = React.useRef(null)
+
+    const handleMouseEnter = () => {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = setTimeout(() => setSubOpen(true), 200)
+    }
+
+    const handleMouseLeave = () => {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = setTimeout(() => setSubOpen(false), 200)
+    }
+
+    React.useEffect(() => {
+        return () => clearTimeout(hoverTimeoutRef.current)
+    }, [])
+
+    return (
+        <div
+            className="relative"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            {React.Children.map(children, child => {
+                if (child && child.type === DropdownSubTrigger) {
+                    return React.cloneElement(child, {
+                        ref: triggerRef,
+                        isSubOpen: subOpen,
+                        setIsSubOpen: setSubOpen
+                    })
+                }
+                if (child && child.type === DropdownSubContent) {
+                    return React.cloneElement(child, {
+                        ref: contentRef,
+                        isSubOpen: subOpen,
+                        triggerRef
+                    })
+                }
+                return child
+            })}
+        </div>
+    )
+}
+
+const DropdownSubTrigger = React.forwardRef(({ children, isSubOpen, setIsSubOpen, className, ...props }, ref) => {
+    return (
+        <Button
+            ref={ref}
+            variant="ghost"
+            size="sm"
+            className={cn(
+                "w-full justify-between font-normal",
+                className
+            )}
+            onClick={(e) => {
+                e.stopPropagation()
+                setIsSubOpen(!isSubOpen)
+            }}
+            {...props}
+        >
+            {children}
+            <ChevronRight className="ml-2 size-4" />
+        </Button>
+    )
+})
+
+const DropdownSubContent = React.forwardRef(({ children, isSubOpen, triggerRef, className, ...props }, ref) => {
+    const [position, setPosition] = React.useState({ top: 0, left: 0 })
+
+    React.useEffect(() => {
+        if (isSubOpen && triggerRef.current) {
+            const triggerRect = triggerRef.current.getBoundingClientRect()
+
+            // Position to the right of the trigger
+            let left = triggerRect.right + window.scrollX + 4
+            let top = triggerRect.top + window.scrollY
+
+            // Check if it would overflow to the right
+            if (left + 200 > window.innerWidth) {
+                left = triggerRect.left + window.scrollX - 200 - 4
+            }
+
+            // Check if it would overflow to the bottom
+            if (top + 300 > window.innerHeight + window.scrollY) {
+                top = window.innerHeight + window.scrollY - 300 - 8
+            }
+
+            setPosition({ top, left })
+        }
+    }, [isSubOpen, triggerRef])
+
+    if (!isSubOpen) return null
+
+    return (
+        <DropdownPortal>
+            <div
+                ref={ref}
+                className={cn(
+                    "bg-popover text-popover-foreground rounded-md border shadow-lg",
+                    "z-50 min-w-[8rem] overflow-hidden p-1",
+                    "fixed origin-top-left animate-in fade-in-0 zoom-in-95",
                     className
                 )}
                 style={{
@@ -148,252 +395,37 @@ function DropdownMenuContent({ className, sideOffset = 4, children, ...props }) 
             >
                 {children}
             </div>
-        </DropdownMenuPortal>
-    )
-}
-
-function DropdownMenuGroup({ children, ...props }) {
-    return (
-        <div data-slot="dropdown-menu-group" {...props}>
-            {children}
-        </div>
-    )
-}
-
-function DropdownMenuItem({ className, inset, variant = "default", value, children, ...props }) {
-    const { handleValueChange, setIsOpen } = React.useContext(DropdownContext)
-
-    const handleClick = () => {
-        if (value) {
-            handleValueChange(value)
-        } else {
-            // Close the dropdown even if no value is provided
-            setIsOpen(false)
-        }
-    }
-
-    return (
-        <Button
-            data-slot="dropdown-menu-item"
-            data-inset={inset}
-            data-variant={variant}
-            variant="ghost"
-            className={`w-full ${className}`}
-            onClick={handleClick}
-            {...props}
-        >
-            {children}
-        </Button>
-    )
-}
-
-function DropdownMenuCheckboxItem({ className, children, checked, value, ...props }) {
-    const { handleValueChange } = React.useContext(DropdownContext)
-
-    return (
-        <Button
-            data-slot="dropdown-menu-checkbox-item"
-            variant="ghost"
-            className={className}
-            onClick={() => value && handleValueChange(value)}
-            {...props}
-        >
-            {checked && (
-                <span className="absolute left-2 flex size-3.5 items-center justify-center">
-                    <CheckIcon className="size-4" />
-                </span>
-            )}
-            {children}
-        </Button>
-    )
-}
-
-function DropdownMenuRadioGroup({ children, ...props }) {
-    return (
-        <div data-slot="dropdown-menu-radio-group" {...props}>
-            {children}
-        </div>
-    )
-}
-
-function DropdownMenuRadioItem({ className, children, checked, value, ...props }) {
-    const { handleValueChange } = React.useContext(DropdownContext)
-
-    return (
-        <Button
-            data-slot="dropdown-menu-radio-item"
-            variant="ghost"
-            className={className}
-            onClick={() => value && handleValueChange(value)}
-            {...props}
-        >
-            {checked && (
-                <span className="absolute left-2 flex size-3.5 items-center justify-center">
-                    <CircleIcon className="size-2 fill-current" />
-                </span>
-            )}
-            {children}
-        </Button>
-    )
-}
-
-function DropdownMenuLabel({ className, inset, ...props }) {
-    return (
-        <div
-            data-slot="dropdown-menu-label"
-            data-inset={inset}
-            className={cn("px-2 py-1.5 text-sm font-medium data-[inset]:pl-8", className)}
-            {...props}
-        />
-    )
-}
-
-function DropdownMenuSeparator({ className, ...props }) {
-    return (
-        <div
-            data-slot="dropdown-menu-separator"
-            className={cn("bg-border -mx-1 my-1 h-px", className)}
-            {...props}
-        />
-    )
-}
-
-function DropdownMenuShortcut({ className, ...props }) {
-    return (
-        <span
-            data-slot="dropdown-menu-shortcut"
-            className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
-            {...props}
-        />
-    )
-}
-
-const DropdownMenuSub = ({ children }) => {
-    const [isSubOpen, setIsSubOpen] = React.useState(false)
-    const subTriggerRef = React.useRef(null)
-    const subContentRef = React.useRef(null)
-
-    React.useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (subContentRef.current && !subContentRef.current.contains(event.target) &&
-                subTriggerRef.current && !subTriggerRef.current.contains(event.target)) {
-                setIsSubOpen(false)
-            }
-        }
-
-        if (isSubOpen) {
-            document.addEventListener('mousedown', handleClickOutside)
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside)
-        }
-    }, [isSubOpen])
-
-    return (
-        <div className="relative">
-            {React.Children.map(children, child => {
-                if (child && child.type === DropdownMenuSubTrigger) {
-                    return React.cloneElement(child, {
-                        isSubOpen,
-                        setIsSubOpen,
-                        ref: subTriggerRef
-                    })
-                }
-                if (child && child.type === DropdownMenuSubContent) {
-                    return React.cloneElement(child, {
-                        isSubOpen,
-                        subTriggerRef,
-                        ref: subContentRef
-                    })
-                }
-                return child
-            })}
-        </div>
-    )
-}
-
-const DropdownMenuSubTrigger = React.forwardRef(({ className, inset, children, isSubOpen, setIsSubOpen, ...props }, ref) => {
-    return (
-        <Button
-            ref={ref}
-            data-slot="dropdown-menu-sub-trigger"
-            data-inset={inset}
-            variant="ghost"
-            className={className}
-            onClick={(e) => {
-                e.stopPropagation();
-                setIsSubOpen(!isSubOpen);
-            }}
-            onMouseEnter={() => setIsSubOpen(true)}
-            {...props}
-        >
-            {children}
-            <ChevronRightIcon className="ml-auto size-4" />
-        </Button>
+        </DropdownPortal>
     )
 })
 
-const DropdownMenuSubContent = React.forwardRef(({ className, isSubOpen, subTriggerRef, ...props }, ref) => {
-    const [position, setPosition] = React.useState({ top: 0, left: 0 })
-
-    React.useEffect(() => {
-        if (isSubOpen && subTriggerRef.current) {
-            const triggerRect = subTriggerRef.current.getBoundingClientRect()
-
-            // Calculate position
-            let top = triggerRect.top + window.scrollY
-            let left = triggerRect.right + window.scrollX + 4
-
-            // Check if submenu would go off-screen to the right
-            if (left + 200 > window.innerWidth) { // Assuming menu width is around 200px
-                left = triggerRect.left + window.scrollX - 200 - 4
-            }
-
-            setPosition({
-                top: top,
-                left: left
-            })
-        }
-    }, [isSubOpen, subTriggerRef])
-
-    if (!isSubOpen) return null
-
+function DropdownArrow({ className, ...props }) {
     return (
-        <DropdownMenuPortal>
-            <div
-                ref={ref}
-                data-slot="dropdown-menu-sub-content"
-                className={cn(
-                    "bg-popover text-popover-foreground animate-in fade-in-0 zoom-in-95",
-                    "z-50 min-w-[8rem] origin-top-left overflow-hidden rounded-md border p-1 shadow-lg",
-                    "fixed",
-                    className
-                )}
-                style={{
-                    top: `${position.top}px`,
-                    left: `${position.left}px`,
-                }}
-                {...props}
-            />
-        </DropdownMenuPortal>
+        <div
+            className={cn(
+                "absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45",
+                "bg-popover shadow-[0_0_0_1px_rgba(0,0,0,0.1)] border-l border-t",
+                className
+            )}
+            {...props}
+        />
     )
-})
+}
 
-export {
-    DropdownMenu,
-    DropdownMenuPortal,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuLabel,
-    DropdownMenuItem,
-    DropdownMenuCheckboxItem,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
+export const Dropdown = {
+    Menu: DropdownMenu,
+    Trigger: DropdownTrigger,
+    Portal: DropdownPortal,
+    Content: DropdownContent,
+    Group: DropdownGroup,
+    Item: DropdownItem,
+    CheckboxItem: DropdownCheckboxItem,
+    RadioGroup: DropdownRadioGroup,
+    RadioItem: DropdownRadioItem,
+    Label: DropdownLabel,
+    Separator: DropdownSeparator,
+    SubMenu: DropdownSubMenu,
+    SubTrigger: DropdownSubTrigger,
+    SubContent: DropdownSubContent,
+    Arrow: DropdownArrow
 }

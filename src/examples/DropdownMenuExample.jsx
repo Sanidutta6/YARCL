@@ -1,75 +1,90 @@
-import { Button } from "@/components/ui/Button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
-    DropdownMenuTrigger,
-} from "../components/ui/DropdownMenu"
+import React, { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Dropdown } from "@/components/ui/DropdownMenu";
 
-export function DropdownMenuExample() {
+function DropdownMenuExample() {
+    const [checkboxChecked, setCheckboxChecked] = useState(false);
+    const [radioValue, setRadioValue] = useState("option1");
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger>
-                Open
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>
+        <Dropdown.Menu>
+            <Dropdown.Trigger asChild>
+                <Button variant="outline">Open</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content className="w-56">
+                <Dropdown.Label>My Account</Dropdown.Label>
+                <Dropdown.Separator />
+                <Dropdown.Group>
+                    <Dropdown.Item>
                         Profile
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
+                        <span className="ml-auto text-xs text-muted-foreground">⇧⌘P</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item>
                         Billing
-                        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
+                        <span className="ml-auto text-xs text-muted-foreground">⌘B</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item>
                         Settings
-                        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
+                        <span className="ml-auto text-xs text-muted-foreground">⌘S</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item>
                         Keyboard shortcuts
-                        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>More...</DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuItem>
+                        <span className="ml-auto text-xs text-muted-foreground">⌘K</span>
+                    </Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Separator />
+                <Dropdown.CheckboxItem
+                    checked={checkboxChecked}
+                    onCheckedChange={setCheckboxChecked}
+                >
+                    Enable Notifications
+                </Dropdown.CheckboxItem>
+                <Dropdown.Separator />
+                <Dropdown.RadioGroup>
+                    <Dropdown.RadioItem
+                        value="option1"
+                        checked={radioValue === "option1"}
+                        onValueChange={setRadioValue}
+                    >
+                        Radio Option 1
+                    </Dropdown.RadioItem>
+                    <Dropdown.RadioItem
+                        value="option2"
+                        checked={radioValue === "option2"}
+                        onValueChange={setRadioValue}
+                    >
+                        Radio Option 2
+                    </Dropdown.RadioItem>
+                </Dropdown.RadioGroup>
+                <Dropdown.Separator />
+                <Dropdown.Group>
+                    <Dropdown.Item>Team</Dropdown.Item>
+                    <Dropdown.SubMenu>
+                        <Dropdown.SubTrigger>Invite users</Dropdown.SubTrigger>
+                        <Dropdown.SubContent>
+                            <Dropdown.Item>Email</Dropdown.Item>
+                            <Dropdown.Item>Message</Dropdown.Item>
+                            <Dropdown.Separator />
+                            <Dropdown.Item>More...</Dropdown.Item>
+                        </Dropdown.SubContent>
+                    </Dropdown.SubMenu>
+                    <Dropdown.Item>
                         New Team
-                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuItem disabled>API</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                        <span className="ml-auto text-xs text-muted-foreground">⌘+T</span>
+                    </Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Separator />
+                <Dropdown.Item>GitHub</Dropdown.Item>
+                <Dropdown.Item>Support</Dropdown.Item>
+                <Dropdown.Item disabled>API</Dropdown.Item>
+                <Dropdown.Separator />
+                <Dropdown.Item>
                     Log out
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+                    <span className="ml-auto text-xs text-muted-foreground">⇧⌘Q</span>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Menu>
+    );
 }
+
+export default DropdownMenuExample;

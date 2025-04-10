@@ -4,7 +4,7 @@ import AccordionExample from '../examples/AccordionExample';
 import AlertDialogExample from '../examples/AlertDialogExample';
 import Preview from '../components/Preview';
 import AlertExample from '../examples/AlertExample';
-import { DropdownMenuExample } from '../examples/DropdownMenuExample';
+import DropdownMenuExample from '../examples/DropdownMenuExample';
 import DialogExample from '../examples/DialogExample';
 import InputExample from '../examples/InputExample';
 import LabelExample from '../examples/LabelExample';
@@ -12,6 +12,7 @@ import ProgressExample from '../examples/ProgressExample';
 import SkeletonExample from '../examples/SkeletonExample';
 import BadgeExample from '../examples/BadgeExample';
 import BreadcrumbExample from '../examples/BreadcrumbExample';
+import CardExample from '../examples/CardExample';
 
 // Import all component examples
 
@@ -24,7 +25,7 @@ const componentMap = {
     badge: <BadgeExample />,
     breadcrumb: <BreadcrumbExample />,
     // button: <ButtonExample />,
-    // card: <CardExample />,
+    card: <CardExample />,
     // checkbox: <CheckboxExample />,
     // collapsible: <CollapsibleExample />,
     dialog: <DialogExample />,
