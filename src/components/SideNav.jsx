@@ -138,8 +138,8 @@ const SidebarNavConfig = {
                             permissions: [""]
                         },
                         {
-                            title: "Select",
-                            url: "/components/select",
+                            title: "Select List",
+                            url: "/components/select-list",
                             permissions: [""]
                         },
                         {
@@ -199,7 +199,7 @@ const SidebarNavConfig = {
     ],
 }
 
-export default function SideNav() {
+function SideNav() {
     const location = useLocation();
 
     const userPermissions = [""];
@@ -287,3 +287,5 @@ export default function SideNav() {
         </Sidebar>
     );
 }
+
+export default SideNav;

@@ -4,6 +4,7 @@ import AccordionExample from '../examples/AccordionExample';
 import AlertDialogExample from '../examples/AlertDialogExample';
 import Preview from '../components/Preview';
 import AlertExample from '../examples/AlertExample';
+import ButtonExample from '../examples/ButtonExample';
 import DropdownMenuExample from '../examples/DropdownMenuExample';
 import DialogExample from '../examples/DialogExample';
 import InputExample from '../examples/InputExample';
@@ -13,6 +14,11 @@ import SkeletonExample from '../examples/SkeletonExample';
 import BadgeExample from '../examples/BadgeExample';
 import BreadcrumbExample from '../examples/BreadcrumbExample';
 import CardExample from '../examples/CardExample';
+import SelectListExample from '../examples/SelectListExample';
+import TextareaExample from '../examples/TextareaExample';
+import TableExample from '../examples/TableExample';
+import SwitchExample from '../examples/SwitchExample';
+import CheckboxExample from '../examples/CheckboxExample';
 
 // Import all component examples
 
@@ -24,9 +30,9 @@ const componentMap = {
     // avatar: <AvatarExample />,
     badge: <BadgeExample />,
     breadcrumb: <BreadcrumbExample />,
-    // button: <ButtonExample />,
+    button: <ButtonExample />,
     card: <CardExample />,
-    // checkbox: <CheckboxExample />,
+    checkbox: <CheckboxExample />,
     // collapsible: <CollapsibleExample />,
     dialog: <DialogExample />,
     "dropdown-menu": <DropdownMenuExample />,
@@ -38,14 +44,14 @@ const componentMap = {
     progress: <ProgressExample />,
     // 'radio-group': <RadioGroupExample />,
     // 'scroll-area': <ScrollAreaExample />,
-    // select: <SelectExample />,
+    'select-list': <SelectListExample />,
     // separator: <SeparatorExample />,
     skeleton: <SkeletonExample />,
     // slider: <SliderExample />,
-    // switch: <SwitchExample />,
-    // table: <TableExample />,
+    switch: <SwitchExample />,
+    table: <TableExample />,
     // tabs: <TabsExample />,
-    // textarea: <TextareaExample />,
+    textarea: <TextareaExample />,
     // toast: <ToastExample />,
     // toggle: <ToggleExample />,
     // 'toggle-group': <ToggleGroupExample />,

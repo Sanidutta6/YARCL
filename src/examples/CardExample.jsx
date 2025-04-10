@@ -1,32 +1,18 @@
 import * as React from "react"
-
 import { Button } from "@/components/ui/Button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/Card"
+import { Card } from "@/components/ui/Card"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/Select"
+import { SelectList } from "@/components/ui/SelectList"
 
 function CardExample() {
     return (
-        <Card className="w-[350px]">
-            <CardHeader>
-                <CardTitle>Create project</CardTitle>
-                <CardDescription>Deploy your new project in one-click.</CardDescription>
-            </CardHeader>
-            <CardContent>
+        <Card.Root className="w-[350px]">
+            <Card.Header>
+                <Card.Title>Create project</Card.Title>
+                <Card.Description>Deploy your new project in one-click.</Card.Description>
+            </Card.Header>
+            <Card.Content>
                 <form>
                     <div className="grid w-full items-center gap-4">
                         <div className="flex flex-col space-y-1.5">
@@ -35,26 +21,29 @@ function CardExample() {
                         </div>
                         <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="framework">Project Framework</Label>
-                            <Select>
-                                <SelectTrigger id="framework">
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent position="popper">
-                                    <SelectItem value="next">Next.js</SelectItem>
-                                    <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                                    <SelectItem value="astro">Astro</SelectItem>
-                                    <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <SelectList.Root>
+                                <SelectList.Trigger
+                                    id="framework"
+                                    type="button" // Add this to prevent form submission
+                                >
+                                    <SelectList.Value placeholder="Select" />
+                                </SelectList.Trigger>
+                                <SelectList.Content position="popper">
+                                    <SelectList.Item value="next">Next.js</SelectList.Item>
+                                    <SelectList.Item value="sveltekit">SvelteKit</SelectList.Item>
+                                    <SelectList.Item value="astro">Astro</SelectList.Item>
+                                    <SelectList.Item value="nuxt">Nuxt.js</SelectList.Item>
+                                </SelectList.Content>
+                            </SelectList.Root>
                         </div>
                     </div>
                 </form>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-                <Button variant="outline">Cancel</Button>
-                <Button>Deploy</Button>
-            </CardFooter>
-        </Card>
+            </Card.Content>
+            <Card.Footer className="flex justify-between">
+                <Button variant="outline" type="button">Cancel</Button>
+                <Button type="submit">Deploy</Button>
+            </Card.Footer>
+        </Card.Root>
     )
 }
 

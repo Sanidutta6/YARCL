@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-function Card({
+function CardContainer({
     className,
     ...props
 }) {
@@ -88,12 +88,12 @@ function CardFooter({
     );
 }
 
-export {
-    Card,
-    CardHeader,
-    CardFooter,
-    CardTitle,
-    CardAction,
-    CardDescription,
-    CardContent,
+export const Card = {
+    Root: CardContainer,
+    Header: CardHeader,
+    Footer: CardFooter,
+    Title: CardTitle,
+    Action: CardAction,
+    Description: CardDescription,
+    Content: CardContent,
 }
