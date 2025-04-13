@@ -113,6 +113,122 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  /* Fade animations */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-out: fade-out 0.3s ease-in;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* Slide animations */
+  --animate-slide-in-right: slide-in-right 0.3s ease-out;
+  --animate-slide-out-right: slide-out-right 0.3s ease-in;
+  --animate-slide-in-left: slide-in-left 0.3s ease-out;
+  --animate-slide-out-left: slide-out-left 0.3s ease-in;
+  --animate-slide-in-top: slide-in-top 0.3s ease-out;
+  --animate-slide-out-top: slide-out-top 0.3s ease-in;
+  --animate-slide-in-bottom: slide-in-bottom 0.3s ease-out;
+  --animate-slide-out-bottom: slide-out-bottom 0.3s ease-in;
+
+  @keyframes slide-in-right {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-right {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide-in-left {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-left {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes slide-in-top {
+    0% {
+      transform: translateY(-100%);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-top {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+
+  @keyframes slide-in-bottom {
+    0% {
+      transform: translateY(100%);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-bottom {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(100%);
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

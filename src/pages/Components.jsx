@@ -19,6 +19,8 @@ import TextareaExample from '../examples/TextareaExample';
 import TableExample from '../examples/TableExample';
 import SwitchExample from '../examples/SwitchExample';
 import CheckboxExample from '../examples/CheckboxExample';
+import TooltipExample from '../examples/TooltipExample';
+import DrawerExample from '../examples/DrawerExample';
 
 // Import all component examples
 
@@ -34,6 +36,7 @@ const componentMap = {
     card: <CardExample />,
     checkbox: <CheckboxExample />,
     // collapsible: <CollapsibleExample />,
+    drawer: <DrawerExample />,
     dialog: <DialogExample />,
     "dropdown-menu": <DropdownMenuExample />,
     // 'hover-card': <HoverCardExample />,
@@ -55,7 +58,7 @@ const componentMap = {
     // toast: <ToastExample />,
     // toggle: <ToggleExample />,
     // 'toggle-group': <ToggleGroupExample />,
-    // tooltip: <TooltipExample />,
+    tooltip: <TooltipExample />,
 };
 
 const Components = () => {
