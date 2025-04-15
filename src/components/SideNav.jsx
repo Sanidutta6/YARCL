@@ -88,6 +88,11 @@ const SidebarNavConfig = {
                             permissions: [""]
                         },
                         {
+                            title: "Drawer",
+                            url: "/components/drawer",
+                            permissions: [""]
+                        },
+                        {
                             title: "Dropdown Menu",
                             url: "/components/dropdown-menu",
                             permissions: [""]
@@ -239,7 +244,7 @@ function SideNav() {
                                 <SidebarMenuItem key={item.title}>
                                     {item.items ? (
                                         <Collapsible defaultOpen={isActiveParent(item.items)} className="group/collapsible">
-                                            <CollapsibleTrigger>
+                                            <CollapsibleTrigger asChild>
                                                 <SidebarMenuButton
                                                     tooltip={item.title}
                                                     className={isActiveParent(item.items) ? "bg-ternary-background text-primary font-medium" : ""}
@@ -253,10 +258,10 @@ function SideNav() {
                                                 <SidebarMenuSub>
                                                     {item.items.filter(subItem => hasPermission(subItem.permissions || [])).map((subItem) => (
                                                         <SidebarMenuSubItem key={subItem.title}>
-                                                            <SidebarMenuSubButton className={isActive(subItem.url) ? "flex-col bg-ternary-background text-primary font-medium [&_svg]:text-primary" : ""}>
+                                                            <SidebarMenuSubButton className={isActive(subItem.url) ? "bg-ternary-background text-primary font-medium [&_svg]:text-primary" : ""} asChild>
                                                                 <Link
                                                                     to={subItem.url}
-                                                                    className="flex items-center gap-2 w-full h-full"
+                                                                    className="flex items-center gap-2 w-full h-full py-1"
                                                                 >
                                                                     <ArrowRight className="size-4" />
                                                                     <span>{subItem.title}</span>

@@ -41,7 +41,9 @@ export function usePopoverPosition({
         if (!open || !triggerRef.current) return;
 
         const triggerRect = triggerRef.current.getBoundingClientRect();
-        const contentRect = contentRef.current?.getBoundingClientRect();
+
+        // Check if content ref exists before trying to use it
+        const contentRect = contentRef.current ? contentRef.current.getBoundingClientRect() : null;
 
         // Set viewport dimensions
         const viewportWidth = window.innerWidth;
@@ -184,8 +186,11 @@ export function usePopoverPosition({
             placement: actualPlacement
         };
 
-        setPosition(newPosition);
-        onPositionChange(newPosition);
+        // Only update state if there's an actual change
+        if (JSON.stringify(position) !== JSON.stringify(newPosition)) {
+            setPosition(newPosition);
+            onPositionChange(newPosition);
+        }
 
     }, [
         open,
@@ -196,8 +201,8 @@ export function usePopoverPosition({
         offset,
         matchWidth,
         flip,
-        avoid,
-        onPositionChange
+        avoid
+        // Remove position and onPositionChange from the dependency array to avoid infinite loops
     ]);
 
     // Update position when required values change
@@ -216,13 +221,16 @@ export function usePopoverPosition({
         window.addEventListener('resize', handleUpdate);
         window.addEventListener('scroll', handleUpdate, true);
 
-        // Initial calculation after mount
-        const timeoutId = setTimeout(handleUpdate, 10);
+        // Initial calculation after mount - use RAF instead of timeout for better rendering cycle
+        const rafId = requestAnimationFrame(() => {
+            // Small timeout to ensure content is rendered before calculating position
+            setTimeout(handleUpdate, 10);
+        });
 
         return () => {
             window.removeEventListener('resize', handleUpdate);
             window.removeEventListener('scroll', handleUpdate, true);
-            clearTimeout(timeoutId);
+            cancelAnimationFrame(rafId);
         };
     }, [open, calculatePosition]);
 

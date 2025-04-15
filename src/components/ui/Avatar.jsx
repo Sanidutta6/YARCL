@@ -1,57 +1,64 @@
-import React, { useState } from 'react';
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-const Avatar = ({
-    src,
-    alt = 'Avatar',
-    initials,
-    size = 'md',
-    className = '',
-}) => {
-    const [imageError, setImageError] = useState(false);
+const AvatarContext = React.createContext({
+    status: "loading" // 'loading' | 'loaded' | 'error'
+});
 
-    const sizeClasses = {
-        sm: 'w-8 h-8 text-xs',
-        md: 'w-10 h-10 text-sm',
-        lg: 'w-16 h-16 text-lg',
-        xl: 'w-24 h-24 text-2xl',
-    };
+function Avatar({ className, children, ...props }) {
+    const [status, setStatus] = React.useState("loading");
 
-    const renderFallback = () => {
-        if (initials) {
-            return <span className="font-medium">{initials}</span>;
-        }
+    return (
+        <AvatarContext.Provider value={{ status, setStatus }}>
+            <div
+                className={cn(
+                    "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+                    className
+                )}
+                {...props}
+            >
+                {children}
+            </div>
+        </AvatarContext.Provider>
+    );
+}
 
-        if (alt && alt.length > 0) {
-            // Get first letter of each word
-            const letters = alt
-                .split(' ')
-                .map(word => word[0])
-                .join('')
-                .substring(0, 2)
-                .toUpperCase();
+function AvatarImage({ className, src, alt, ...props }) {
+    const { setStatus } = React.useContext(AvatarContext);
 
-            return <span className="font-medium">{letters}</span>;
-        }
+    return (
+        <img
+            className={cn(
+                "aspect-square h-full w-full object-cover",
+                className
+            )}
+            src={src}
+            alt={alt}
+            onLoad={() => setStatus("loaded")}
+            onError={() => setStatus("error")}
+            {...props}
+        />
+    );
+}
 
-        return <span className="font-medium">U</span>;
-    };
+function AvatarFallback({ className, children, ...props }) {
+    const { status } = React.useContext(AvatarContext);
+
+    if (status === "loaded") return null;
 
     return (
         <div
-            className={`${sizeClasses[size]} relative rounded-full overflow-hidden bg-muted flex items-center justify-center text-muted-foreground ${className}`}
-        >
-            {src && !imageError ? (
-                <img
-                    src={src}
-                    alt={alt}
-                    className="w-full h-full object-cover"
-                    onError={() => setImageError(true)}
-                />
-            ) : (
-                renderFallback()
+            className={cn(
+                "flex h-full w-full items-center justify-center rounded-full bg-gray-100",
+                className
             )}
+            {...props}
+        >
+            <span className="text-sm font-medium text-gray-600">
+                {children}
+            </span>
         </div>
     );
-};
+}
 
-export default Avatar;
+export { Avatar, AvatarImage, AvatarFallback };

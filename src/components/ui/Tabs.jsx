@@ -1,5 +1,12 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Button } from "./Button"
+
+// Create context for tabs
+const TabsContext = React.createContext({
+    activeTab: null,
+    setActiveTab: () => { }
+})
 
 function Tabs({
     className,
@@ -10,34 +17,20 @@ function Tabs({
     const [activeTab, setActiveTab] = React.useState(defaultValue || null)
 
     return (
-        <div
-            data-slot="tabs"
-            className={cn("flex flex-col gap-2", className)}
-            {...props}
-        >
-            {React.Children.map(children, child => {
-                if (child.type === TabsList) {
-                    return React.cloneElement(child, {
-                        activeTab,
-                        setActiveTab
-                    })
-                }
-                if (child.type === TabsContent) {
-                    return React.cloneElement(child, {
-                        activeTab,
-                        isActive: child.props.value === activeTab
-                    })
-                }
-                return child
-            })}
-        </div>
+        <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+            <div
+                data-slot="tabs"
+                className={cn("flex flex-col gap-2", className)}
+                {...props}
+            >
+                {children}
+            </div>
+        </TabsContext.Provider>
     )
 }
 
 function TabsList({
     className,
-    activeTab,
-    setActiveTab,
     children,
     ...props
 }) {
@@ -50,26 +43,20 @@ function TabsList({
             )}
             {...props}
         >
-            {React.Children.map(children, child => {
-                if (child.type === TabsTrigger) {
-                    return React.cloneElement(child, {
-                        isActive: child.props.value === activeTab,
-                        onClick: () => setActiveTab(child.props.value)
-                    })
-                }
-                return child
-            })}
+            {children}
         </div>
     )
 }
 
 function TabsTrigger({
     className,
-    isActive,
-    onClick,
+    value,
     children,
     ...props
 }) {
+    const { activeTab, setActiveTab } = React.useContext(TabsContext)
+    const isActive = value === activeTab
+
     return (
         <Button
             data-slot="tabs-trigger"
@@ -79,7 +66,7 @@ function TabsTrigger({
                 "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring",
                 className
             )}
-            onClick={onClick}
+            onClick={() => setActiveTab(value)}
             {...props}
         >
             {children}
@@ -89,11 +76,12 @@ function TabsTrigger({
 
 function TabsContent({
     className,
-    isActive,
+    value,
     children,
     ...props
 }) {
-    if (!isActive) return null
+    const { activeTab } = React.useContext(TabsContext)
+    if (value !== activeTab) return null
 
     return (
         <div

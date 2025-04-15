@@ -1,6 +1,8 @@
+import * as React from "react"
+
 import { cn } from "@/lib/utils"
 
-function CardContainer({
+function Card({
     className,
     ...props
 }) {
@@ -88,12 +90,12 @@ function CardFooter({
     );
 }
 
-export const Card = {
-    Root: CardContainer,
-    Header: CardHeader,
-    Footer: CardFooter,
-    Title: CardTitle,
-    Action: CardAction,
-    Description: CardDescription,
-    Content: CardContent,
+export {
+    Card,
+    CardHeader,
+    CardFooter,
+    CardTitle,
+    CardAction,
+    CardDescription,
+    CardContent,
 }

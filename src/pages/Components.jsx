@@ -21,6 +21,9 @@ import SwitchExample from '../examples/SwitchExample';
 import CheckboxExample from '../examples/CheckboxExample';
 import TooltipExample from '../examples/TooltipExample';
 import DrawerExample from '../examples/DrawerExample';
+import CollapsibleExample from '../examples/CollapsibleExample';
+import TabsExample from '../examples/TabsExample';
+import { AvatarExample } from '../examples/AvatarExample';
 
 // Import all component examples
 
@@ -29,13 +32,13 @@ const componentMap = {
     alert: <AlertExample />,
     'alert-dialog': <AlertDialogExample />,
     // 'aspect-ratio': <AspectRatioExample />,
-    // avatar: <AvatarExample />,
+    avatar: <AvatarExample />,
     badge: <BadgeExample />,
     breadcrumb: <BreadcrumbExample />,
     button: <ButtonExample />,
     card: <CardExample />,
     checkbox: <CheckboxExample />,
-    // collapsible: <CollapsibleExample />,
+    collapsible: <CollapsibleExample />,
     drawer: <DrawerExample />,
     dialog: <DialogExample />,
     "dropdown-menu": <DropdownMenuExample />,
@@ -53,7 +56,7 @@ const componentMap = {
     // slider: <SliderExample />,
     switch: <SwitchExample />,
     table: <TableExample />,
-    // tabs: <TabsExample />,
+    tabs: <TabsExample />,
     textarea: <TextareaExample />,
     // toast: <ToastExample />,
     // toggle: <ToggleExample />,

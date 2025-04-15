@@ -1,5 +1,7 @@
 import * as React from "react"
-import { cva } from "class-variance-authority"
+import { Slot } from "@/components/primitives/slot"
+import { cva } from "class-variance-authority";
+
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -38,25 +40,16 @@ function Button({
     variant,
     size,
     asChild = false,
-    children,
     ...props
 }) {
-    if (asChild && React.isValidElement(children)) {
-        return React.cloneElement(children, {
-            className: cn(buttonVariants({ variant, size, className }), children.props.className),
-            ...props
-        })
-    }
+    const Comp = asChild ? Slot : "button"
 
     return (
-        <button
+        <Comp
             data-slot="button"
             className={cn(buttonVariants({ variant, size, className }))}
-            {...props}
-        >
-            {children}
-        </button>
-    )
+            {...props} />
+    );
 }
 
 export { Button, buttonVariants }

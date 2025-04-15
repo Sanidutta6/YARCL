@@ -1,43 +1,44 @@
-import React, { useState } from "react";
-import { cn } from "@/lib/utils"
+import React, { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+const CollapsibleContext = React.createContext({
+    isOpen: false,
+    toggle: () => { },
+});
 
 function Collapsible({ children, defaultOpen = false, className, ...props }) {
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
+    const toggle = () => setIsOpen(prev => !prev);
+
     return (
-        <div
-            data-slot="collapsible"
-            className={cn("w-full", className)}
-            data-state={isOpen ? "open" : "closed"}
-            {...props}
-        >
-            {React.Children.map(children, (child) => {
-                if (child.type === CollapsibleTrigger) {
-                    return React.cloneElement(child, {
-                        isOpen,
-                        onClick: () => setIsOpen(!isOpen)
-                    });
-                }
-                if (child.type === CollapsibleContent) {
-                    return React.cloneElement(child, { isOpen });
-                }
-                return child;
-            })}
-        </div>
+        <CollapsibleContext.Provider value={{ isOpen, toggle }}>
+            <div
+                data-slot="collapsible"
+                className={cn("w-full", className)}
+                data-state={isOpen ? "open" : "closed"}
+                {...props}
+            >
+                {children}
+            </div>
+        </CollapsibleContext.Provider>
     );
 }
 
 function CollapsibleTrigger({
     children,
-    isOpen,
-    onClick,
     className,
     asChild = false,
     ...props
 }) {
-    if (asChild) {
-        return React.cloneElement(React.Children.only(children), {
-            onClick,
+    const { isOpen, toggle } = React.useContext(CollapsibleContext);
+
+    if (asChild && React.isValidElement(children)) {
+        return React.cloneElement(children, {
+            onClick: (e) => {
+                toggle();
+                children.props.onClick?.(e);
+            },
             'aria-expanded': isOpen,
             'data-state': isOpen ? 'open' : 'closed',
             className: cn(
@@ -52,7 +53,7 @@ function CollapsibleTrigger({
     return (
         <button
             data-slot="collapsible-trigger"
-            onClick={onClick}
+            onClick={toggle}
             className={cn(
                 "flex w-full items-center gap-2 rounded-md text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
                 "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
@@ -67,21 +68,46 @@ function CollapsibleTrigger({
     );
 }
 
-function CollapsibleContent({ children, isOpen, className, ...props }) {
+function CollapsibleContent({ children, className, ...props }) {
+    const { isOpen } = React.useContext(CollapsibleContext);
+    const contentRef = useRef(null);
+    const [height, setHeight] = useState(0);
+
+    useEffect(() => {
+        if (contentRef.current) {
+            const resizeObserver = new ResizeObserver((entries) => {
+                setHeight(entries[0].contentRect.height);
+            });
+
+            resizeObserver.observe(contentRef.current);
+            return () => resizeObserver.disconnect();
+        }
+    }, []);
+
     return (
         <div
             data-slot="collapsible-content"
             className={cn(
                 "overflow-hidden transition-all duration-200",
-                isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0",
                 className
             )}
+            style={{
+                height: isOpen ? `${height}px` : "0px",
+                opacity: isOpen ? 1 : 0,
+            }}
             aria-hidden={!isOpen}
             {...props}
         >
-            {children}
+            <div ref={contentRef}>
+                {children}
+            </div>
         </div>
     );
 }
+
+// Add display names to help with debugging
+Collapsible.displayName = "Collapsible";
+CollapsibleTrigger.displayName = "CollapsibleTrigger";
+CollapsibleContent.displayName = "CollapsibleContent";
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent };

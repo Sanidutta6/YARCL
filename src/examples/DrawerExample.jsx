@@ -14,9 +14,9 @@ function DrawerExample() {
         <div className="flex items-center justify-center gap-2">
             <Drawer open={openRight} onOpenChange={setOpenRight}>
                 <DrawerTrigger asChild>
-                    <button className="px-4 py-2 border rounded">
+                    <Button>
                         Edit Profile Right
-                    </button>
+                    </Button>
                 </DrawerTrigger>
                 <DrawerContent>
                     <DrawerHeader className="text-left">
@@ -50,9 +50,9 @@ function DrawerExample() {
 
             <Drawer open={openLeft} onOpenChange={setOpenLeft} direction="left">
                 <DrawerTrigger asChild>
-                    <button className="px-4 py-2 border rounded">
+                    <Button>
                         Edit Profile Left
-                    </button>
+                    </Button>
                 </DrawerTrigger>
                 <DrawerContent >
                     <DrawerHeader className="text-left">
@@ -86,9 +86,9 @@ function DrawerExample() {
 
             <Drawer open={openBottom} onOpenChange={setOpenBottom} direction="bottom">
                 <DrawerTrigger asChild>
-                    <button className="px-4 py-2 border rounded">
+                    <Button>
                         Edit Profile Bottom
-                    </button>
+                    </Button>
                 </DrawerTrigger>
                 <DrawerContent>
                     <DrawerHeader className="text-left">
@@ -122,9 +122,9 @@ function DrawerExample() {
 
             <Drawer open={openTop} onOpenChange={setOpenTop} direction="top">
                 <DrawerTrigger asChild>
-                    <button className="px-4 py-2 border rounded">
+                    <Button>
                         Edit Profile Top
-                    </button>
+                    </Button>
                 </DrawerTrigger>
                 <DrawerContent>
                     <DrawerHeader className="text-left">
