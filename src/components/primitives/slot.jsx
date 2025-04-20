@@ -20,14 +20,14 @@ const SLOTTABLE_IDENTIFIER = Symbol('slottable');
 export function Slottable({ children }) {
     return React.Children.only(children);
 }
-Slottable.__radixId = SLOTTABLE_IDENTIFIER;
+Slottable.__yarclId = SLOTTABLE_IDENTIFIER;
 
 // Check if a component is Slottable
 function isSlottable(child) {
     return (
         React.isValidElement(child) &&
         typeof child.type === 'function' &&
-        child.type.__radixId === SLOTTABLE_IDENTIFIER
+        child.type.__yarclId === SLOTTABLE_IDENTIFIER
     );
 }
 
@@ -124,7 +124,7 @@ export function createSlot(ownerName) {
 export function createSlottable(ownerName) {
     const Component = ({ children }) => <Slottable>{children}</Slottable>;
     Component.displayName = `${ownerName}.Slottable`;
-    Component.__radixId = SLOTTABLE_IDENTIFIER;
+    Component.__yarclId = SLOTTABLE_IDENTIFIER;
     return Component;
 }
 
