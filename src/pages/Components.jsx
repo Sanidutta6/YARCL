@@ -24,6 +24,7 @@ import DrawerExample from '../examples/DrawerExample';
 import CollapsibleExample from '../examples/CollapsibleExample';
 import TabsExample from '../examples/TabsExample';
 import { AvatarExample } from '../examples/AvatarExample';
+import SeparatorExample from '../examples/SeparatorExample';
 
 // Import all component examples
 
@@ -51,7 +52,7 @@ const componentMap = {
     // 'radio-group': <RadioGroupExample />,
     // 'scroll-area': <ScrollAreaExample />,
     'select-list': <SelectListExample />,
-    // separator: <SeparatorExample />,
+    separator: <SeparatorExample />,
     skeleton: <SkeletonExample />,
     // slider: <SliderExample />,
     switch: <SwitchExample />,

@@ -1,20 +1,41 @@
-import { cn } from "@/lib/utils"
+import React from 'react';
+import { cn } from '@/lib/utils';
 
-function Separator({
-    className,
-    orientation = "horizontal",
-    ...props
-}) {
+const ORIENTATIONS = ['horizontal', 'vertical'];
+const DEFAULT_ORIENTATION = 'horizontal';
+
+function isValidOrientation(orientation) {
+    return ORIENTATIONS.includes(orientation);
+}
+
+const Separator = React.forwardRef((props, forwardedRef) => {
+    const {
+        decorative,
+        orientation: orientationProp = DEFAULT_ORIENTATION,
+        className,
+        ...domProps
+    } = props;
+
+    const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
+    const ariaOrientation = orientation === 'vertical' ? orientation : undefined;
+    const semanticProps = decorative
+        ? { role: 'none' }
+        : { 'aria-orientation': ariaOrientation, role: 'separator' };
+
     return (
         <div
-            data-slot="separator-root"
-            orientation={orientation}
+            data-orientation={orientation}
             className={cn(
                 "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
                 className
             )}
-            {...props} />
+            {...semanticProps}
+            {...domProps}
+            ref={forwardedRef}
+        />
     );
-}
+});
 
-export { Separator }
+Separator.displayName = 'Separator';
+
+export { Separator };
