@@ -31,6 +31,7 @@ import ToggleGroupExample from '../examples/ToggleGroupExample';
 import ScrollAreaExample from '../examples/ScrollAreaExample';
 import AspectRatioExample from '../examples/AspectRatioExample';
 import PopoverExample from '../examples/PopoverExample';
+import ContextMenuExample from '../examples/ContextMenuExample';
 
 // Import all component examples
 
@@ -46,6 +47,7 @@ const componentMap = {
     card: <CardExample />,
     checkbox: <CheckboxExample />,
     collapsible: <CollapsibleExample />,
+    "context-menu": <ContextMenuExample />,
     drawer: <DrawerExample />,
     dialog: <DialogExample />,
     "dropdown-menu": <DropdownMenuExample />,

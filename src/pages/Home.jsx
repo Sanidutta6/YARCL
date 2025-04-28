@@ -22,7 +22,7 @@ const Home = () => {
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                     <a
-                        href="https://github.com/username/react-tailwind-ui"
+                        href="https://github.com/Sanidutta6/YARCL"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center h-10 px-4 py-2 font-medium rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"

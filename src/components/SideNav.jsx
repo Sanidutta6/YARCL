@@ -83,6 +83,11 @@ const SidebarNavConfig = {
                             permissions: [""]
                         },
                         {
+                            title: "Context Menu",
+                            url: "/components/context-menu",
+                            permissions: [""]
+                        },
+                        {
                             title: "Dialog",
                             url: "/components/dialog",
                             permissions: [""]
