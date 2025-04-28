@@ -94,7 +94,7 @@ const AlertDialogContent = React.forwardRef(
         }
 
         const content = (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
                 <div
                     ref={ref}
                     className={`relative max-w-lg rounded-lg bg-background p-6 shadow-lg ${variantStyles[variant].border} ${className}`}

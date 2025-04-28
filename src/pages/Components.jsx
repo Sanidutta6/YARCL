@@ -25,6 +25,12 @@ import CollapsibleExample from '../examples/CollapsibleExample';
 import TabsExample from '../examples/TabsExample';
 import { AvatarExample } from '../examples/AvatarExample';
 import SeparatorExample from '../examples/SeparatorExample';
+import PaginationExample from '../examples/PaginationExample';
+import ToggleExample from '../examples/ToggleExample';
+import ToggleGroupExample from '../examples/ToggleGroupExample';
+import ScrollAreaExample from '../examples/ScrollAreaExample';
+import AspectRatioExample from '../examples/AspectRatioExample';
+import PopoverExample from '../examples/PopoverExample';
 
 // Import all component examples
 
@@ -32,7 +38,7 @@ const componentMap = {
     accordion: <AccordionExample />,
     alert: <AlertExample />,
     'alert-dialog': <AlertDialogExample />,
-    // 'aspect-ratio': <AspectRatioExample />,
+    'aspect-ratio': <AspectRatioExample />,
     avatar: <AvatarExample />,
     badge: <BadgeExample />,
     breadcrumb: <BreadcrumbExample />,
@@ -46,11 +52,11 @@ const componentMap = {
     // 'hover-card': <HoverCardExample />,
     input: <InputExample />,
     label: <LabelExample />,
-    // pagination: <PaginationExample />,
-    // popover: <PopoverExample />,
+    pagination: <PaginationExample />,
+    popover: <PopoverExample />,
     progress: <ProgressExample />,
     // 'radio-group': <RadioGroupExample />,
-    // 'scroll-area': <ScrollAreaExample />,
+    'scroll-area': <ScrollAreaExample />,
     'select-list': <SelectListExample />,
     separator: <SeparatorExample />,
     skeleton: <SkeletonExample />,
@@ -60,8 +66,8 @@ const componentMap = {
     tabs: <TabsExample />,
     textarea: <TextareaExample />,
     // toast: <ToastExample />,
-    // toggle: <ToggleExample />,
-    // 'toggle-group': <ToggleGroupExample />,
+    toggle: <ToggleExample />,
+    'toggle-group': <ToggleGroupExample />,
     tooltip: <TooltipExample />,
 };
 

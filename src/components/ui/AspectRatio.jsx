@@ -17,4 +17,4 @@ const AspectRatio = ({
     );
 };
 
-export default AspectRatio;
+export { AspectRatio };

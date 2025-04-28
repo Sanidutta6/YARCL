@@ -1,32 +1,42 @@
 import React from 'react';
-import { SelectList } from '../components/ui/SelectList';
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectViewport,
+    SelectGroup,
+    SelectLabel,
+    SelectItem,
+    SelectSeparator
+} from '@/components/ui/SelectList';
 
-function SelectListExample() {
+function SelectExample() {
     const [value, setValue] = React.useState("");
 
     return (
-        <SelectList.Root value={value} onValueChange={setValue}>
-            <SelectList.Trigger className="w-[180px]">
-                <SelectList.Value placeholder="Select an option" />
-            </SelectList.Trigger>
-            <SelectList.Content>
-                <SelectList.Viewport>
-                    <SelectList.Group>
-                        <SelectList.Label>Fruits</SelectList.Label>
-                        <SelectList.Item value="apple">Apple</SelectList.Item>
-                        <SelectList.Item value="banana">Banana</SelectList.Item>
-                        <SelectList.Item value="orange">Orange</SelectList.Item>
-                    </SelectList.Group>
-                    <SelectList.Separator />
-                    <SelectList.Group>
-                        <SelectList.Label>Vegetables</SelectList.Label>
-                        <SelectList.Item value="carrot">Carrot</SelectList.Item>
-                        <SelectList.Item value="potato">Potato</SelectList.Item>
-                    </SelectList.Group>
-                </SelectList.Viewport>
-            </SelectList.Content>
-        </SelectList.Root>
+        <Select value={value} onValueChange={setValue}>
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectViewport>
+                    <SelectGroup>
+                        <SelectLabel>Fruits</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                        <SelectItem value="banana">Banana</SelectItem>
+                        <SelectItem value="orange">Orange</SelectItem>
+                    </SelectGroup>
+                    <SelectSeparator />
+                    <SelectGroup>
+                        <SelectLabel>Vegetables</SelectLabel>
+                        <SelectItem value="carrot">Carrot</SelectItem>
+                        <SelectItem value="potato">Potato</SelectItem>
+                    </SelectGroup>
+                </SelectViewport>
+            </SelectContent>
+        </Select>
     );
 }
 
-export default SelectListExample;
+export default SelectExample;

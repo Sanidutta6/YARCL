@@ -7,7 +7,7 @@ import { usePopoverPosition } from '@/hooks/usePopoverPosition';
 
 const SelectContext = React.createContext();
 
-export function Select({ children, value, onValueChange, defaultValue, open: controlledOpen, onOpenChange, defaultOpen = false, disabled }) {
+function Select({ children, value, onValueChange, defaultValue, open: controlledOpen, onOpenChange, defaultOpen = false, disabled }) {
     const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
     const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
     const triggerRef = React.useRef(null);
@@ -139,16 +139,16 @@ function SelectPortal({ children }) {
     return ReactDOM.createPortal(children, document.body);
 }
 
-function SelectContent({ 
-    children, 
-    className, 
-    position = 'popper', 
-    align = 'start', 
+function SelectContent({
+    children,
+    className,
+    position = 'popper',
+    align = 'start',
     sideOffset = 4,
-    ...props 
+    ...props
 }) {
     const { open, triggerRef, contentRef, setOpen } = React.useContext(SelectContext);
-    
+
     // Use our custom hook for positioning
     const popoverPosition = usePopoverPosition({
         triggerRef,
@@ -265,14 +265,14 @@ function SelectSeparator({ className, ...props }) {
     );
 }
 
-export const SelectList = {
-    Root: Select,
-    Trigger: SelectTrigger,
-    Value: SelectValue,
-    Content: SelectContent,
-    Viewport: SelectViewport,
-    Group: SelectGroup,
-    Label: SelectLabel,
-    Item: SelectItem,
-    Separator: SelectSeparator,
+export {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectViewport,
+    SelectGroup,
+    SelectLabel,
+    SelectItem,
+    SelectSeparator,
 };

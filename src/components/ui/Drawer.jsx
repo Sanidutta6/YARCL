@@ -145,7 +145,7 @@ const DrawerContent = ({ children, className }) => {
         <div className="fixed inset-0 z-50 overflow-hidden">
             {/* Backdrop with fade animation */}
             <div
-                className={`fixed inset-0 bg-black/50 ${isClosing ? "animate-fade-out" : "animate-fade-in"}`}
+                className={`fixed inset-0 bg-black/80 ${isClosing ? "animate-fade-out" : "animate-fade-in"}`}
                 onClick={handleClose}
                 aria-hidden="true"
             />

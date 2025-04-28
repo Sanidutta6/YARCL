@@ -2,6 +2,7 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import ReactDOM from "react-dom"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/Button"
 
 const DialogContext = React.createContext()
 
@@ -20,7 +21,7 @@ function Dialog({ children, open: controlledOpen, onOpenChange, defaultOpen = fa
             <div data-slot="dialog" {...props}>
                 {React.Children.map(children, child => {
                     if (child.type === DialogTrigger) {
-                        return React.cloneElement(child, { setOpen })
+                        return React.cloneElement(child)
                     }
                     return child
                 })}
@@ -29,12 +30,29 @@ function Dialog({ children, open: controlledOpen, onOpenChange, defaultOpen = fa
     )
 }
 
-function DialogTrigger({ children, setOpen, ...props }) {
-    return React.cloneElement(React.Children.only(children), {
-        'data-slot': 'dialog-trigger',
-        onClick: () => setOpen(true),
-        ...props
-    })
+function DialogTrigger({ children, asChild = false, ...props }) {
+    const { setOpen } = React.useContext(DialogContext);
+
+    if (asChild) {
+        const child = React.Children.only(children);
+        return React.cloneElement(child, {
+            onClick: (e) => {
+                child.props.onClick?.(e);
+                setOpen(true);
+            },
+            ...props
+        });
+    }
+
+    return (
+        <Button
+            onClick={() => setOpen(true)}
+            data-slot="dialog-trigger"
+            {...props}
+        >
+            {children}
+        </Button>
+    );
 }
 
 function DialogPortal({ children }) {
@@ -52,7 +70,7 @@ function DialogOverlay({ className, ...props }) {
         <div
             data-slot="dialog-overlay"
             className={cn(
-                "fixed inset-0 z-50 bg-black/50 animate-in fade-in-0",
+                "fixed inset-0 z-50 bg-black/80 animate-in fade-in-0",
                 className
             )}
             onClick={() => setOpen(false)}

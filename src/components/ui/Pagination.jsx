@@ -1,113 +1,118 @@
-import React from 'react';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import * as React from "react"
+import {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    MoreHorizontalIcon,
+} from "lucide-react"
 
-const Pagination = ({
-    className = '',
-    children
-}) => {
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/Button";
+
+function Pagination({
+    className,
+    ...props
+}) {
     return (
         <nav
             role="navigation"
             aria-label="pagination"
-            className={`mx-auto flex w-full justify-center ${className}`}
-        >
-            {children}
-        </nav>
+            data-slot="pagination"
+            className={cn("mx-auto flex w-full justify-center", className)}
+            {...props} />
     );
-};
+}
 
-export const PaginationContent = ({
-    className = '',
-    children
-}) => {
+function PaginationContent({
+    className,
+    ...props
+}) {
     return (
-        <ul className={`flex flex-row items-center gap-1 ${className}`}>
-            {children}
-        </ul>
+        <ul
+            data-slot="pagination-content"
+            className={cn("flex flex-row items-center gap-1", className)}
+            {...props} />
     );
-};
+}
 
-export const PaginationItem = ({
-    className = '',
-    children
-}) => {
-    return <li className={className}>{children}</li>;
-};
+function PaginationItem({
+    ...props
+}) {
+    return <li data-slot="pagination-item" {...props} />;
+}
 
-export const PaginationLink = ({
-    className = '',
-    isActive = false,
-    children,
-    href = "#",
-    onClick
-}) => {
+function PaginationLink({
+    className,
+    isActive,
+    size = "icon",
+    ...props
+}) {
     return (
         <a
             aria-current={isActive ? "page" : undefined}
-            href={href}
-            onClick={(e) => {
-                if (onClick) {
-                    e.preventDefault();
-                    onClick();
-                }
-            }}
-            className={`flex h-9 w-9 items-center justify-center rounded-md border text-sm ${isActive
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-input bg-background hover:bg-accent hover:text-accent-foreground"
-                } ${className}`}
-        >
-            {children}
-        </a>
+            data-slot="pagination-link"
+            data-active={isActive}
+            className={cn(buttonVariants({
+                variant: isActive ? "outline" : "ghost",
+                size,
+            }), className)}
+            {...props} />
     );
-};
+}
 
-export const PaginationPrevious = ({
-    className = '',
-    href,
-    onClick
-}) => {
+function PaginationPrevious({
+    className,
+    ...props
+}) {
     return (
         <PaginationLink
-            href={href}
-            onClick={onClick}
-            className={`gap-1 pl-2.5 ${className}`}
-        >
-            <ChevronLeft className="h-4 w-4" />
-            <span>Previous</span>
+            aria-label="Go to previous page"
+            size="default"
+            className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
+            {...props}>
+            <ChevronLeftIcon />
+            <span className="hidden sm:block">Previous</span>
         </PaginationLink>
     );
-};
+}
 
-export const PaginationNext = ({
-    className = '',
-    href,
-    onClick
-}) => {
+function PaginationNext({
+    className,
+    ...props
+}) {
     return (
         <PaginationLink
-            href={href}
-            onClick={onClick}
-            className={`gap-1 pr-2.5 ${className}`}
-        >
-            <span>Next</span>
-            <ChevronRight className="h-4 w-4" />
+            aria-label="Go to next page"
+            size="default"
+            className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
+            {...props}>
+            <span className="hidden sm:block">Next</span>
+            <ChevronRightIcon />
         </PaginationLink>
     );
-};
+}
 
-export const PaginationEllipsis = ({
-    className = ''
-}) => {
+function PaginationEllipsis({
+    className,
+    ...props
+}) {
     return (
         <span
-            className={`flex h-9 w-9 items-center justify-center ${className}`}
-            aria-hidden="true"
-        >
-            <MoreHorizontal className="h-4 w-4" />
+            aria-hidden
+            data-slot="pagination-ellipsis"
+            className={cn("flex size-9 items-center justify-center", className)}
+            {...props}>
+            <MoreHorizontalIcon className="size-4" />
             <span className="sr-only">More pages</span>
         </span>
     );
-};
+}
 
-// Export the main Pagination component as default
-export default Pagination;
+export {
+    Pagination,
+    PaginationContent,
+    PaginationLink,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+}
