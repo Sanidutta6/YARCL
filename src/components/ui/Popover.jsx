@@ -95,6 +95,7 @@ const PopoverContent = ({
     align = "center",
     sideOffset = 4,
     className = "",
+    centered = true,
     ...props
 }) => {
     const contentRef = useRef(null);
@@ -102,7 +103,7 @@ const PopoverContent = ({
     const triggerRef = React.useRef(null);
 
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen || centered) return;
 
         const updatePosition = () => {
             if (triggerRef.current && contentRef.current) {
@@ -134,7 +135,7 @@ const PopoverContent = ({
         updatePosition();
         window.addEventListener("resize", updatePosition);
         return () => window.removeEventListener("resize", updatePosition);
-    }, [isOpen, align, sideOffset]);
+    }, [isOpen, align, sideOffset, centered]);
 
     if (!isOpen) return null;
 
@@ -144,16 +145,17 @@ const PopoverContent = ({
             data-slot="popover-content"
             data-state={isOpen ? "open" : "closed"}
             className={`
-        bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100
-        ${isOpen ? "animate-in fade-in-0" : "animate-out fade-out-0"}
-        ${isOpen ? "zoom-in-95" : "zoom-out-95"}
-        z-50 rounded-md border border-gray-200 dark:border-gray-700 p-4 shadow-md outline-none
-        ${className}
-      `}
+                bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100
+                ${isOpen ? "animate-in fade-in-0" : "animate-out fade-out-0"}
+                ${isOpen ? "zoom-in-95" : "zoom-out-95"}
+                z-50 rounded-md border border-gray-200 dark:border-gray-700 p-4 shadow-md outline-none
+                ${className}
+            `}
             style={{
                 position: "fixed",
-                top: `${position.top}px`,
-                left: `${position.left}px`,
+                top: centered ? "50%" : `${position.top}px`,
+                left: centered ? "50%" : `${position.left}px`,
+                transform: centered ? "translate(-50%, -50%)" : undefined,
                 transformOrigin: "var(--radix-popover-content-transform-origin)",
             }}
             {...props}
