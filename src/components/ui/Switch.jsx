@@ -1,44 +1,54 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 function Switch({
-    className,
-    checked,
-    onChange,
-    disabled,
-    ...props
+  className,
+  checked,
+  onChange,
+  disabled,
+  ...props
 }) {
-    return (
-        <label className="inline-flex items-center cursor-pointer">
-            <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={checked}
-                onChange={onChange}
-                disabled={disabled}
-                {...props}
-            />
-            <div
-                data-slot="switch"
-                className={cn(
-                    "peer-checked:bg-primary peer-checked:border-primary bg-input dark:bg-input/80",
-                    "relative inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs",
-                    "transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
-                    "disabled:cursor-not-allowed disabled:opacity-50",
-                    className
-                )}
-            >
-                <div
-                    data-slot="switch-thumb"
-                    className={cn(
-                        "bg-background dark:peer-checked:bg-primary-foreground dark:peer-not-checked:bg-foreground",
-                        "absolute block size-4 rounded-full ring-0 transition-transform",
-                        "peer-checked:translate-x-[calc(100%-2px)] peer-not-checked:translate-x-0"
-                    )}
-                />
-            </div>
-        </label>
-    )
+  const [localChecked, setLocalChecked] = useState(false);
+  const isControlled = checked !== undefined;
+  const currentChecked = isControlled ? checked : localChecked;
+
+  const handleChange = (e) => {
+    if (!isControlled) {
+      setLocalChecked(e.target.checked);
+    }
+    onChange?.(e); // Call onChange if provided
+  };
+
+  return (
+    <label className="inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        className="sr-only peer"
+        checked={currentChecked}
+        onChange={handleChange}
+        disabled={disabled}
+        {...props}
+      />
+      <div
+        className={cn(
+          "relative inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs",
+          "transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          currentChecked ? "peer-checked:bg-primary peer-checked:border-primary" : "bg-input dark:bg-input/80",
+          className
+        )}
+      >
+        <div
+          className={cn(
+            "absolute bg-background dark:bg-primary-foreground",
+            "block size-4 rounded-full ring-0 transition-transform",
+            currentChecked ? "translate-x-[calc(100%-1px)]" : "translate-x-0"
+          )}
+        />
+      </div>
+    </label>
+  );
 }
 
-export { Switch }
+export { Switch };
