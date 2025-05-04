@@ -176,71 +176,31 @@ const DropdownContent = React.forwardRef(({ children, className, sideOffset = 4,
     const ownRef = React.useRef(null)
     const combinedRef = useCombinedRefs(ref, contentRef, ownRef)
 
-    // Handle keyboard navigation for menu items
-    const handleKeyDown = (e) => {
-        if (e.key === 'Escape') {
-            e.preventDefault()
-            setOpen(false)
-            triggerRef.current?.focus()
-            return
-        }
-
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            e.preventDefault()
-
-            const menuItems = Array.from(
-                combinedRef.current?.querySelectorAll('[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]') || []
-            )
-
-            if (!menuItems.length) return
-
-            const currentIndex = menuItems.findIndex(item => item === document.activeElement)
-
-            let nextIndex
-            if (e.key === 'ArrowDown') {
-                nextIndex = currentIndex < menuItems.length - 1 ? currentIndex + 1 : 0
-            } else {
-                nextIndex = currentIndex > 0 ? currentIndex - 1 : menuItems.length - 1
-            }
-
-            menuItems[nextIndex]?.focus()
-        }
-    }
-
-    // Calculate position after render to get accurate dimensions
     const updatePosition = React.useCallback(() => {
         if (!open || !triggerRef.current || !combinedRef.current) return
 
         const triggerRect = triggerRef.current.getBoundingClientRect()
         const contentRect = combinedRef.current.getBoundingClientRect()
 
-        // Calculate initial position
         let top = triggerRect.bottom + window.scrollY + sideOffset
         let left = triggerRect.left + window.scrollX + alignOffset
 
-        // Adjust for alignment
         if (align === 'center') {
             left = left + (triggerRect.width - contentRect.width) / 2
         } else if (align === 'end') {
             left = left + triggerRect.width - contentRect.width
         }
 
-        // Check boundaries
         const viewportWidth = window.innerWidth
         const viewportHeight = window.innerHeight
 
-        // Ensure the menu stays within viewport
         if (left + contentRect.width > viewportWidth - 8) {
             left = Math.max(8, viewportWidth - contentRect.width - 8)
         }
         if (left < 8) left = 8
 
-        // Check if menu would go below viewport and flip if needed
         if (top + contentRect.height > viewportHeight + window.scrollY - 8) {
-            // Position above trigger
             top = triggerRect.top + window.scrollY - contentRect.height - sideOffset
-
-            // If still overflows at top, just position at top of viewport
             if (top < window.scrollY + 8) {
                 top = window.scrollY + 8
             }
@@ -252,10 +212,7 @@ const DropdownContent = React.forwardRef(({ children, className, sideOffset = 4,
 
     React.useEffect(() => {
         if (open) {
-            // Initial position calculation
             setTimeout(updatePosition, 0)
-
-            // Recalculate if window resizes
             window.addEventListener('resize', updatePosition)
             return () => window.removeEventListener('resize', updatePosition)
         }
@@ -271,7 +228,7 @@ const DropdownContent = React.forwardRef(({ children, className, sideOffset = 4,
                 aria-orientation="vertical"
                 className={cn(
                     "bg-popover text-popover-foreground rounded-md border shadow-lg",
-                    "min-w-[8rem] overflow-hidden p-1",
+                    "min-w-[8rem] overflow-auto max-h-[300px] p-1", // FIX: constrain height
                     "fixed origin-top-left pointer-events-auto",
                     ready ? "animate-in fade-in-0 zoom-in-95" : "opacity-0",
                     className
@@ -281,7 +238,13 @@ const DropdownContent = React.forwardRef(({ children, className, sideOffset = 4,
                     left: `${position.left}px`,
                     zIndex
                 }}
-                onKeyDown={handleKeyDown}
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                        e.preventDefault()
+                        setOpen(false)
+                        triggerRef.current?.focus()
+                    }
+                }}
                 tabIndex={-1}
                 {...props}
             >
@@ -295,7 +258,10 @@ DropdownContent.displayName = "DropdownContent"
 
 const DropdownGroup = React.forwardRef(({ children, className, ...props }, ref) => {
     return (
-        <div ref={ref} role="group" className={cn("space-y-1 p-1", className)} {...props}>
+        <div ref={ref} role="group" className={cn("bg-popover text-popover-foreground rounded-md border shadow-lg",
+  "min-w-[8rem] max-w-[16rem] max-h-[20rem] overflow-auto",  
+  "p-1 fixed origin-top-left pointer-events-auto",
+  ready ? "animate-in fade-in-0 zoom-in-95" : "opacity-0", className)} {...props}>
             {children}
         </div>
     )

@@ -12,7 +12,10 @@ function DropdownMenuExample() {
                 <Dropdown.Trigger asChild>
                     <Button variant="outline">Open</Button>
                 </Dropdown.Trigger>
-                <Dropdown.Content className="w-56">
+                <Dropdown.Content className="w-56"
+                    sideOffset={8} // Add space between trigger and dropdown
+                    align="start"  // Aligns dropdown to the left of the trigger
+                >
                     <Dropdown.Label>My Account</Dropdown.Label>
                     <Dropdown.Separator />
                     <Dropdown.Group>
@@ -86,18 +89,7 @@ function DropdownMenuExample() {
                 </Dropdown.Content>
             </Dropdown.Menu>
 
-            <Dropdown.Menu>
-                <Dropdown.Trigger>Open</Dropdown.Trigger>
-                <Dropdown.Content>
-                    <Dropdown.Label>My Account</Dropdown.Label>
-                    <Dropdown.Separator />
-                    <Dropdown.Item>Profile</Dropdown.Item>
-                    <Dropdown.Item>Billing</Dropdown.Item>
-                    <Dropdown.Item>Team</Dropdown.Item>
-                    <Dropdown.Item>Subscription</Dropdown.Item>
-                </Dropdown.Content>
-            </Dropdown.Menu>
-
+            
         </div>
     );
 }
